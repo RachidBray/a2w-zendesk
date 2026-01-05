@@ -186,45 +186,50 @@
       </div>
 
       {{!-- Next/Previous Article Navigation --}}
-      <nav class="article-pagination" aria-label="{{t 'article_navigation'}}">
-        {{#each section.articles}}
-          {{#is id ../article.id}}
-            {{#if @first}}
-              <div class="article-pagination-item article-pagination-prev article-pagination-disabled">
-                <span class="article-pagination-label">{{t 'previous'}}</span>
-              </div>
-            {{else}}
-              {{#with (lookup ../section.articles (math @index "-" 1))}}
-                <a href="{{url}}" class="article-pagination-item article-pagination-prev">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M10 12L6 8L10 4"/>
-                  </svg>
-                  <div class="article-pagination-content">
-                    <span class="article-pagination-label">{{t 'previous'}}</span>
-                    <span class="article-pagination-title">{{title}}</span>
-                  </div>
-                </a>
-              {{/with}}
-            {{/if}}
-            {{#if @last}}
-              <div class="article-pagination-item article-pagination-next article-pagination-disabled">
-                <span class="article-pagination-label">{{t 'next'}}</span>
-              </div>
-            {{else}}
-              {{#with (lookup ../section.articles (math @index "+" 1))}}
-                <a href="{{url}}" class="article-pagination-item article-pagination-next">
-                  <div class="article-pagination-content">
-                    <span class="article-pagination-label">{{t 'next'}}</span>
-                    <span class="article-pagination-title">{{title}}</span>
-                  </div>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M6 4L10 8L6 12"/>
-                  </svg>
-                </a>
-              {{/with}}
-            {{/if}}
-          {{/is}}
-        {{/each}}
+      <nav class="article-pagination" aria-label="Article navigation">
+        <div class="article-pagination-inner" id="article-pagination">
+          {{!-- Populated via JavaScript using section.articles data --}}
+        </div>
+        <script type="application/json" id="section-articles-data">
+          [{{#each section.articles}}{"id": {{id}}, "title": "{{title}}", "url": "{{url}}"}{{#unless @last}},{{/unless}}{{/each}}]
+        </script>
+        <script>
+          (function() {
+            var currentArticleId = {{article.id}};
+            var articlesData = JSON.parse(document.getElementById('section-articles-data').textContent);
+            var container = document.getElementById('article-pagination');
+            
+            var currentIndex = articlesData.findIndex(function(a) { return a.id === currentArticleId; });
+            var prevArticle = currentIndex > 0 ? articlesData[currentIndex - 1] : null;
+            var nextArticle = currentIndex < articlesData.length - 1 ? articlesData[currentIndex + 1] : null;
+            
+            var html = '';
+            
+            if (prevArticle) {
+              html += '<a href="' + prevArticle.url + '" class="article-pagination-item article-pagination-prev">' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18L9 12L15 6"/></svg>' +
+                '<div class="article-pagination-content">' +
+                '<span class="article-pagination-label">Previous</span>' +
+                '<span class="article-pagination-title">' + prevArticle.title + '</span>' +
+                '</div></a>';
+            } else {
+              html += '<div class="article-pagination-item article-pagination-prev article-pagination-disabled"></div>';
+            }
+            
+            if (nextArticle) {
+              html += '<a href="' + nextArticle.url + '" class="article-pagination-item article-pagination-next">' +
+                '<div class="article-pagination-content">' +
+                '<span class="article-pagination-label">Next</span>' +
+                '<span class="article-pagination-title">' + nextArticle.title + '</span>' +
+                '</div>' +
+                '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6L15 12L9 18"/></svg></a>';
+            } else {
+              html += '<div class="article-pagination-item article-pagination-next article-pagination-disabled"></div>';
+            }
+            
+            container.innerHTML = html;
+          })();
+        </script>
       </nav>
 
       {{#if settings.show_article_comments}}
