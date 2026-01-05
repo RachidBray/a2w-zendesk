@@ -184,6 +184,49 @@
           {{related_articles}}
         {{/if}}
       </div>
+
+      {{!-- Next/Previous Article Navigation --}}
+      <nav class="article-pagination" aria-label="{{t 'article_navigation'}}">
+        {{#each section.articles}}
+          {{#is id ../article.id}}
+            {{#if @first}}
+              <div class="article-pagination-item article-pagination-prev article-pagination-disabled">
+                <span class="article-pagination-label">{{t 'previous'}}</span>
+              </div>
+            {{else}}
+              {{#with (lookup ../section.articles (math @index "-" 1))}}
+                <a href="{{url}}" class="article-pagination-item article-pagination-prev">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M10 12L6 8L10 4"/>
+                  </svg>
+                  <div class="article-pagination-content">
+                    <span class="article-pagination-label">{{t 'previous'}}</span>
+                    <span class="article-pagination-title">{{title}}</span>
+                  </div>
+                </a>
+              {{/with}}
+            {{/if}}
+            {{#if @last}}
+              <div class="article-pagination-item article-pagination-next article-pagination-disabled">
+                <span class="article-pagination-label">{{t 'next'}}</span>
+              </div>
+            {{else}}
+              {{#with (lookup ../section.articles (math @index "+" 1))}}
+                <a href="{{url}}" class="article-pagination-item article-pagination-next">
+                  <div class="article-pagination-content">
+                    <span class="article-pagination-label">{{t 'next'}}</span>
+                    <span class="article-pagination-title">{{title}}</span>
+                  </div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M6 4L10 8L6 12"/>
+                  </svg>
+                </a>
+              {{/with}}
+            {{/if}}
+          {{/is}}
+        {{/each}}
+      </nav>
+
       {{#if settings.show_article_comments}}
         <div class="article-comments" id="article-comments">
           <section class="comments">
