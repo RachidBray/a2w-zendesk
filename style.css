@@ -2205,7 +2205,7 @@ ul {
 
 .sidenav-title {
   display: block;
-  font-size: 16px;
+  font-size: 14px;
   position: relative;
   font-weight: 700;
   text-transform: uppercase;
@@ -3485,6 +3485,21 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.collapsible-sidebar-body ul::-webkit-scrollbar {
+  width: 6px;
+}
+.collapsible-sidebar-body ul::-webkit-scrollbar-track {
+  background: transparent;
+}
+.collapsible-sidebar-body ul::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 3px;
+}
+.collapsible-sidebar-body ul::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
 }
 .collapsible-sidebar-body ul li {
   margin: 0;

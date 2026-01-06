@@ -669,6 +669,62 @@
     ) {
       notificationElm.previousElementSibling.focus();
     }
+
+    // Load all articles in sidebar
+    loadAllSidebarArticles();
   });
+
+  // Function to load all articles in the sidebar via Zendesk API
+  async function loadAllSidebarArticles() {
+    const sidebar = document.querySelector('.article-sidebar .collapsible-sidebar-body ul');
+    const seeMoreLink = document.querySelector('.article-sidebar .article-sidebar-item');
+    
+    if (!sidebar || !seeMoreLink) return;
+    
+    // Get section URL from the "see more" link
+    const sectionUrl = seeMoreLink.getAttribute('href');
+    if (!sectionUrl) return;
+    
+    // Extract section ID from URL (format: /hc/xx/sections/123456789)
+    const sectionMatch = sectionUrl.match(/sections\/(\d+)/);
+    if (!sectionMatch) return;
+    
+    const sectionId = sectionMatch[1];
+    const currentArticleLink = sidebar.querySelector('.current-article');
+    const currentArticleId = currentArticleLink ? currentArticleLink.getAttribute('href').match(/articles\/(\d+)/) : null;
+    
+    try {
+      // Fetch all articles from the section via Zendesk API
+      const response = await fetch(`/api/v2/help_center/sections/${sectionId}/articles.json?per_page=100&sort_by=position`);
+      if (!response.ok) return;
+      
+      const data = await response.json();
+      if (!data.articles || data.articles.length <= 10) return;
+      
+      // Clear existing articles
+      sidebar.innerHTML = '';
+      
+      // Add all articles
+      data.articles.forEach(article => {
+        const li = document.createElement('li');
+        const isCurrentArticle = currentArticleId && currentArticleId[1] === String(article.id);
+        
+        li.innerHTML = `
+          <a href="${article.html_url}" 
+             class="sidenav-item ${isCurrentArticle ? 'current-article' : ''}"
+             ${isCurrentArticle ? 'aria-current="page"' : ''}>
+             ${article.title}
+          </a>
+        `;
+        sidebar.appendChild(li);
+      });
+      
+      // Remove the "see more" link since we're showing all articles
+      seeMoreLink.remove();
+      
+    } catch (error) {
+      console.log('Could not load all sidebar articles:', error);
+    }
+  }
 
 })();
