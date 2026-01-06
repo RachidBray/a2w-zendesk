@@ -2201,7 +2201,8 @@ ul {
 }
 
 .sidenav-title {
-  font-size: 11px;
+  display: block;
+  font-size: 16px;
   position: relative;
   font-weight: 700;
   text-transform: uppercase;
@@ -2217,7 +2218,7 @@ ul {
   gap: 12px;
   padding: 14px 24px;
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   color: #475569;
   text-decoration: none;
