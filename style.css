@@ -1164,8 +1164,8 @@ ul {
 .hero {
   background-color: #fff;
   background-image: none;
-  min-height: 320px;
-  padding: 80px 20px;
+  min-height: 200px;
+  padding: 50px 20px;
   text-align: center;
   width: 100%;
   position: relative;
@@ -1175,8 +1175,8 @@ ul {
 }
 @media (min-width: 768px) {
   .hero {
-    min-height: 360px;
-    padding: 100px 40px;
+    min-height: 240px;
+    padding: 60px 40px;
   }
 }
 .hero::before {
@@ -1195,7 +1195,7 @@ ul {
   }
 }
 .hero .search {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 0 1px #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 0 0 1px #e8e8e8;
   border-radius: 16px;
 }
 .hero .search:focus-within {
