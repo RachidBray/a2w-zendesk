@@ -1674,8 +1674,6 @@ ul {
 @media (min-width: 1024px) {
   .article {
     flex: 1 0 66%;
-    max-width: 66%;
-    min-width: 640px;
     padding: 0 30px;
   }
 }
