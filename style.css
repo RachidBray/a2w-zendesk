@@ -2057,11 +2057,13 @@ ul {
 }
 
 /***** Article Pagination (Next/Previous) *****/
+/* 
 .article-pagination {
   margin: 40px 0;
   border-top: 1px solid #e2e8f0;
   padding-top: 40px;
-}
+} 
+*/
 .article-pagination-inner {
   display: flex;
   flex-direction: column;
