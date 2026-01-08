@@ -762,8 +762,20 @@
           sidebar.querySelectorAll('.sidebar-article-hidden').forEach(li => {
             li.classList.remove('sidebar-article-hidden');
           });
+          
+          // Add expanded class to enable scrolling
+          sidebar.classList.add('sidebar-articles-expanded');
+          
           // Hide the button
           showMoreBtn.style.display = 'none';
+          
+          // Scroll to current article if it exists
+          const currentArticle = sidebar.querySelector('.current-article');
+          if (currentArticle) {
+            setTimeout(() => {
+              currentArticle.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+          }
         });
         
         // Insert button after the sidebar ul

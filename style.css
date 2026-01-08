@@ -3496,6 +3496,33 @@ ul {
   display: none;
 }
 
+/* Expanded state with scrollbar */
+.collapsible-sidebar-body ul.sidebar-articles-expanded {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.collapsible-sidebar-body ul.sidebar-articles-expanded::-webkit-scrollbar {
+  width: 8px;
+}
+.collapsible-sidebar-body ul.sidebar-articles-expanded::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+.collapsible-sidebar-body ul.sidebar-articles-expanded::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+  border: 2px solid #f1f5f9;
+}
+.collapsible-sidebar-body ul.sidebar-articles-expanded::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+/* Firefox scrollbar */
+.collapsible-sidebar-body ul.sidebar-articles-expanded {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
 /* Show more button for sidebar articles */
 .sidebar-show-more-btn {
   display: flex;
