@@ -677,19 +677,35 @@
   // Function to load all articles in the sidebar via Zendesk API
   async function loadAllSidebarArticles() {
     const sidebar = document.querySelector('.article-sidebar .collapsible-sidebar-body ul');
+    if (!sidebar) return;
+    
     const seeMoreLink = document.querySelector('.article-sidebar .article-sidebar-item');
     
-    if (!sidebar || !seeMoreLink) return;
+    // Try to get section ID from "see more" link or from current article URL
+    let sectionId = null;
     
-    // Get section URL from the "see more" link
-    const sectionUrl = seeMoreLink.getAttribute('href');
-    if (!sectionUrl) return;
+    if (seeMoreLink) {
+      const sectionUrl = seeMoreLink.getAttribute('href');
+      const sectionMatch = sectionUrl ? sectionUrl.match(/sections\/(\d+)/) : null;
+      if (sectionMatch) sectionId = sectionMatch[1];
+    }
     
-    // Extract section ID from URL (format: /hc/xx/sections/123456789)
-    const sectionMatch = sectionUrl.match(/sections\/(\d+)/);
-    if (!sectionMatch) return;
+    // If no section ID from "see more" link, try to get it from the page URL or breadcrumbs
+    if (!sectionId) {
+      // Try getting from breadcrumb links
+      const breadcrumbLinks = document.querySelectorAll('.breadcrumbs a');
+      for (const link of breadcrumbLinks) {
+        const href = link.getAttribute('href');
+        const match = href ? href.match(/sections\/(\d+)/) : null;
+        if (match) {
+          sectionId = match[1];
+          break;
+        }
+      }
+    }
     
-    const sectionId = sectionMatch[1];
+    if (!sectionId) return;
+    
     const currentArticleLink = sidebar.querySelector('.current-article');
     const currentArticleId = currentArticleLink ? currentArticleLink.getAttribute('href').match(/articles\/(\d+)/) : null;
     
@@ -699,7 +715,10 @@
       if (!response.ok) return;
       
       const data = await response.json();
-      if (!data.articles || data.articles.length <= 10) return;
+      
+      // Only update if there are more articles than currently shown
+      const currentArticleCount = sidebar.querySelectorAll('li').length;
+      if (!data.articles || data.articles.length <= currentArticleCount) return;
       
       // Clear existing articles
       sidebar.innerHTML = '';
@@ -720,7 +739,7 @@
       });
       
       // Remove the "see more" link since we're showing all articles
-      seeMoreLink.remove();
+      if (seeMoreLink) seeMoreLink.remove();
       
     } catch (error) {
       console.log('Could not load all sidebar articles:', error);
