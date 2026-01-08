@@ -3487,26 +3487,44 @@ ul {
   list-style: none;
   margin: 0;
   padding: 0;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-.collapsible-sidebar-body ul::-webkit-scrollbar {
-  width: 6px;
-}
-.collapsible-sidebar-body ul::-webkit-scrollbar-track {
-  background: transparent;
-}
-.collapsible-sidebar-body ul::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
-  border-radius: 3px;
-}
-.collapsible-sidebar-body ul::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
 }
 .collapsible-sidebar-body ul li {
   margin: 0;
   padding: 0;
 }
+.collapsible-sidebar-body ul li.sidebar-article-hidden {
+  display: none;
+}
+
+/* Show more button for sidebar articles */
+.sidebar-show-more-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $brand_color;
+  background: #f8fafc;
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  border-radius: 0 0 16px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.sidebar-show-more-btn:hover {
+  background: #f1f5f9;
+  color: $brand_color;
+}
+.sidebar-show-more-btn svg {
+  transition: transform 0.2s ease;
+}
+.sidebar-show-more-btn:hover svg {
+  transform: translateY(2px);
+}
+
 .article-sidebar-item {
   display: flex;
   align-items: center;

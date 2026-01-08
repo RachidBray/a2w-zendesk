@@ -680,6 +680,7 @@
     if (!sidebar) return;
     
     const seeMoreLink = document.querySelector('.article-sidebar .article-sidebar-item');
+    const INITIAL_VISIBLE = 10; // Number of articles to show initially
     
     // Try to get section ID from "see more" link or from current article URL
     let sectionId = null;
@@ -723,11 +724,13 @@
       // Clear existing articles
       sidebar.innerHTML = '';
       
-      // Add all articles
-      data.articles.forEach(article => {
+      // Add all articles (hidden ones will be controlled by CSS)
+      data.articles.forEach((article, index) => {
         const li = document.createElement('li');
         const isCurrentArticle = currentArticleId && currentArticleId[1] === String(article.id);
+        const isHidden = index >= INITIAL_VISIBLE;
         
+        li.className = isHidden ? 'sidebar-article-hidden' : '';
         li.innerHTML = `
           <a href="${article.html_url}" 
              class="sidenav-item ${isCurrentArticle ? 'current-article' : ''}"
@@ -738,8 +741,34 @@
         sidebar.appendChild(li);
       });
       
-      // Remove the "see more" link since we're showing all articles
+      // Remove the old "see more" link
       if (seeMoreLink) seeMoreLink.remove();
+      
+      // Add "Show more" button if there are hidden articles
+      if (data.articles.length > INITIAL_VISIBLE) {
+        const hiddenCount = data.articles.length - INITIAL_VISIBLE;
+        const showMoreBtn = document.createElement('button');
+        showMoreBtn.className = 'sidebar-show-more-btn';
+        showMoreBtn.type = 'button';
+        showMoreBtn.innerHTML = `
+          <span class="sidebar-show-more-text">Show ${hiddenCount} more articles</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        `;
+        
+        showMoreBtn.addEventListener('click', () => {
+          // Show all hidden articles
+          sidebar.querySelectorAll('.sidebar-article-hidden').forEach(li => {
+            li.classList.remove('sidebar-article-hidden');
+          });
+          // Hide the button
+          showMoreBtn.style.display = 'none';
+        });
+        
+        // Insert button after the sidebar ul
+        sidebar.parentNode.appendChild(showMoreBtn);
+      }
       
     } catch (error) {
       console.log('Could not load all sidebar articles:', error);
