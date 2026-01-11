@@ -187,24 +187,44 @@
 
       {{!-- Next/Previous Article Navigation --}}
       <nav class="article-pagination" aria-label="Article navigation">
-        <div class="article-pagination-inner" id="article-pagination">
-          {{!-- Populated via JavaScript using section.articles data --}}
-        </div>
-        <script type="application/json" id="section-articles-data">
-          [{{#each section.articles}}{"id": {{id}}, "title": "{{title}}", "url": "{{url}}"}{{#unless @last}},{{/unless}}{{/each}}]
-        </script>
+        <div class="article-pagination-inner" id="article-pagination"></div>
         <script>
-          (function() {
-            var currentArticleId = {{article.id}};
-            var articlesData = JSON.parse(document.getElementById('section-articles-data').textContent);
-            var container = document.getElementById('article-pagination');
-            
+        (async function() {
+          // Get current article ID
+          var currentArticleId = {{article.id}};
+          var container = document.getElementById('article-pagination');
+          // Try to get section ID from sidebar or breadcrumbs
+          var sectionId = null;
+          var seeMoreLink = document.querySelector('.article-sidebar .article-sidebar-item');
+          if (seeMoreLink) {
+            var sectionUrl = seeMoreLink.getAttribute('href');
+            var sectionMatch = sectionUrl ? sectionUrl.match(/sections\/(\d+)/) : null;
+            if (sectionMatch) sectionId = sectionMatch[1];
+          }
+          if (!sectionId) {
+            var breadcrumbLinks = document.querySelectorAll('.breadcrumbs a');
+            for (var i = 0; i < breadcrumbLinks.length; i++) {
+              var href = breadcrumbLinks[i].getAttribute('href');
+              var match = href ? href.match(/sections\/(\d+)/) : null;
+              if (match) {
+                sectionId = match[1];
+                break;
+              }
+            }
+          }
+          if (!sectionId) return;
+          // Fetch all articles in section
+          try {
+            var response = await fetch('/api/v2/help_center/sections/' + sectionId + '/articles.json?per_page=100&sort_by=position');
+            if (!response.ok) return;
+            var data = await response.json();
+            var articlesData = data.articles.map(function(article) {
+              return { id: article.id, title: article.title, url: article.html_url };
+            });
             var currentIndex = articlesData.findIndex(function(a) { return a.id === currentArticleId; });
             var prevArticle = currentIndex > 0 ? articlesData[currentIndex - 1] : null;
             var nextArticle = currentIndex < articlesData.length - 1 ? articlesData[currentIndex + 1] : null;
-            
             var html = '';
-            
             if (prevArticle) {
               html += '<a href="' + prevArticle.url + '" class="article-pagination-item article-pagination-prev">' +
                 '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18L9 12L15 6"/></svg>' +
@@ -215,7 +235,6 @@
             } else {
               html += '<div class="article-pagination-item article-pagination-prev article-pagination-disabled"></div>';
             }
-            
             if (nextArticle) {
               html += '<a href="' + nextArticle.url + '" class="article-pagination-item article-pagination-next">' +
                 '<div class="article-pagination-content">' +
@@ -226,9 +245,11 @@
             } else {
               html += '<div class="article-pagination-item article-pagination-next article-pagination-disabled"></div>';
             }
-            
             container.innerHTML = html;
-          })();
+          } catch (e) {
+            // fail silently
+          }
+        })();
         </script>
       </nav>
 
