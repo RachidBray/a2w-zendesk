@@ -1,3 +1,7 @@
+/* Add top spacing for promoted articles section on home page */
+.promoted-articles-section {
+  margin-top: 2.5rem;
+}
 @charset "UTF-8";
 /***** Normalize.css *****/
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
